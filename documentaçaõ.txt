@@ -1,0 +1,9 @@
+"https://anime-3260ou0hk-zidanyts-projects.vercel.app/animes"
+
+npm create vite@latest anime-app --template react-ts
+
+npm install
+
+npm install axios
+
+npm run build
