@@ -9,6 +9,7 @@ interface Anime {
   description: string;
   year: number;
   isTopTen: boolean;
+  rating: number; // Adicionando o campo rating
 }
 
 const Top10Animes: React.FC = () => {
@@ -41,6 +42,7 @@ const Top10Animes: React.FC = () => {
             <p>Gênero: {anime.genre}</p>
             <p>{anime.description}</p>
             <p>Ano: {anime.year}</p>
+            <p>Avaliação: {anime.rating.toFixed(1)} / 5</p> {/* Exibindo rating */}
           </li>
         ))}
       </ul>
