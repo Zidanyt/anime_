@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios from 'axios'
 
 const axiosInstance = axios.create({
-  baseURL: 'https://anime-api-alpha-red.vercel.app/', // URL base da sua API
+  baseURL: 'https://anime-api-alpha-red.vercel.app/',
   headers: {
     'Content-Type': 'application/json',
   },
-});
+})
 
-export default axiosInstance;
+export default axiosInstance

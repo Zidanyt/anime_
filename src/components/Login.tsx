@@ -1,30 +1,30 @@
-import React, { useState } from 'react';
-import axios from '../utils/axiosInstance'; // Importando a instância do axios
-import { useNavigate } from 'react-router-dom'; // Importando useNavigate
+import React, { useState } from 'react'
+import axios from '../utils/axiosInstance'
+import { useNavigate, Link  } from 'react-router-dom'
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // Estado para a mensagem de erro
-  const navigate = useNavigate(); // Inicializa useNavigate
+interface LoginProps {
+  onLogin: () => void
+}
+
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const response = await axios.post('/login', { email, password });
-      console.log('Login bem-sucedido:', response.data);
-  
-      // Armazenar o token e o userId no localStorage
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userId', response.data.userId); // Armazenando o userId
-  
-      // Redirecionar para a rota dos Anime Lists
-      navigate('/anime-list'); // Atualize para a rota correta dos anime lists
+      const response = await axios.post('/login', { email, password })
+      localStorage.setItem('token', response.data.token)
+      localStorage.setItem('userId', response.data.userId)
+      onLogin()
+      navigate('/anime-list')
     } catch (error) {
-      console.error('Erro no login:', error);
-      setErrorMessage('Email ou senha incorretos.'); // Atualiza a mensagem de erro
+      console.error('Erro no login:', error)
+      setErrorMessage('Email ou senha incorretos.')
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -43,10 +43,11 @@ const Login: React.FC = () => {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>} {/* Exibe mensagem de erro */}
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       <button type="submit">Entrar</button>
+      <p>Não tem uma conta? <Link to="/">Cadastre-se</Link></p>
     </form>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

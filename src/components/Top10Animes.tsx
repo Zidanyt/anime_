@@ -1,36 +1,35 @@
-// src/components/Top10Animes.tsx
-import React, { useEffect, useState } from 'react';
-import axiosInstance from '../utils/axiosInstance';
+import React, { useEffect, useState } from 'react'
+import axiosInstance from '../utils/axiosInstance'
 
 interface Anime {
-  id: string;
-  title: string;
-  genre: string;
-  description: string;
-  year: number;
-  isTopTen: boolean;
-  rating: number; // Adicionando o campo rating
+  id: string
+  title: string
+  genre: string
+  description: string
+  year: number
+  isTopTen: boolean
+  rating: number
 }
 
 const Top10Animes: React.FC = () => {
-  const [topAnimes, setTopAnimes] = useState<Anime[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [topAnimes, setTopAnimes] = useState<Anime[]>([])
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchTop10Animes = async () => {
       try {
-        const response = await axiosInstance.get('/top10');
-        setTopAnimes(response.data);
+        const response = await axiosInstance.get('/top10')
+        setTopAnimes(response.data)
       } catch (error) {
-        console.error('Error fetching Top 10 animes:', error);
-        setError('Failed to fetch Top 10 animes.');
+        console.error('Error fetching Top 10 animes:', error)
+        setError('Failed to fetch Top 10 animes.')
       }
-    };
+    }
 
-    fetchTop10Animes();
-  }, []);
+    fetchTop10Animes()
+  }, [])
 
-  if (error) return <div>{error}</div>;
+  if (error) return <div>{error}</div>
 
   return (
     <div>
@@ -42,12 +41,12 @@ const Top10Animes: React.FC = () => {
             <p>Gênero: {anime.genre}</p>
             <p>{anime.description}</p>
             <p>Ano: {anime.year}</p>
-            <p>Avaliação: {anime.rating.toFixed(1)} / 5</p> {/* Exibindo rating */}
+            <p>Avaliação: {anime.rating.toFixed(1)} / 5</p>
           </li>
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default Top10Animes;
+export default Top10Animes

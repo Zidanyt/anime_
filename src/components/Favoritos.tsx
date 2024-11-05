@@ -1,38 +1,38 @@
 // src/components/Favoritos.tsx
-import React, { useEffect, useState } from 'react';
-import axiosInstance from '../utils/axiosInstance';
+import React, { useEffect, useState } from 'react'
+import axiosInstance from '../utils/axiosInstance'
 
 interface Anime {
-  id: string;
-  title: string;
-  genre: string;
-  description: string;
-  year: number;
+  id: string
+  title: string
+  genre: string
+  description: string
+  year: number
 }
 
 const Favoritos: React.FC = () => {
-  const [favoriteAnimes, setFavoriteAnimes] = useState<Anime[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [favoriteAnimes, setFavoriteAnimes] = useState<Anime[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await axiosInstance.get('/favorites');
-        setFavoriteAnimes(response.data);
+        const response = await axiosInstance.get('/favorites')
+        setFavoriteAnimes(response.data)
       } catch (error) {
-        console.error('Error fetching favorite animes:', error);
-        setError('Failed to fetch favorite animes.');
+        console.error('Error fetching favorite animes:', error)
+        setError('Failed to fetch favorite animes.')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchFavorites();
-  }, []);
+    fetchFavorites()
+  }, [])
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div>Loading...</div>
+  if (error) return <div>{error}</div>
 
   return (
     <div>
@@ -48,7 +48,7 @@ const Favoritos: React.FC = () => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default Favoritos;
+export default Favoritos
