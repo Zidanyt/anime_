@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import axiosInstance from '../utils/axiosInstance'
+import axiosInstance from '../../utils/axiosInstance'
 import { useNavigate, Link } from 'react-router-dom'
+
+import style from './Register.module.css';
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -28,10 +30,11 @@ const Register: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className={style.conteiner}>
+      <form className={style.formulario} onSubmit={handleSubmit}>
       <h2>Cadastro</h2>
-      <form onSubmit={handleSubmit}>
         <input
+          className={style.formulario_input}
           type="email"
           placeholder="Email"
           value={email}
@@ -39,17 +42,20 @@ const Register: React.FC = () => {
           required
         />
         <input
+          className={style.formulario_input}
           type="password"
           placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Cadastrar</button>
-        <p>Já tem uma conta? <Link to="/login">Faça login</Link></p>
+        <button className={style.formulario_button} type="submit">Cadastrar</button>
+        <p>Já tem uma conta? <Link className={style.formulario_link} to="/login">Faça login</Link></p>
       </form>
+
       {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
       {error && <div style={{ color: 'red' }}>{error}</div>}
+    
     </div>
   )
 }

@@ -4,8 +4,8 @@ import AnimeList from './components/AnimeList'
 import RecentAnimeList from './components/RecentAnimeList'
 import Favoritos from './components/Favoritos'
 import Top10Animes from './components/Top10Animes'
-import Login from './components/Login'
-import Register from './components/Register'
+import Login from './pages/Login/Login'
+import Register from './pages/Register/Register'
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
