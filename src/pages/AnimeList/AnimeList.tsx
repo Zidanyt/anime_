@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import axiosInstance from '../utils/axiosInstance'
+import axiosInstance from '../../utils/axiosInstance'
 import axios from 'axios'
+
+import style from './AnimeList.module.css';
 
 interface Anime {
   id: string
@@ -99,7 +101,7 @@ const AnimeList: React.FC = () => {
   if (error) return <div>{error}</div>
 
   return (
-    <div>
+    <div className={style.container}>
       <h1>Lista de Animes</h1>
       <ul>
         {animes.map(anime => (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom'
-import AnimeList from './components/AnimeList'
+import AnimeList from './pages/AnimeList/AnimeList'
 import RecentAnimeList from './components/RecentAnimeList'
 import Favoritos from './components/Favoritos'
 import Top10Animes from './components/Top10Animes'
