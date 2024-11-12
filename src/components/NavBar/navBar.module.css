@@ -1,0 +1,38 @@
+.container {
+    background-color: white;
+    display: flex;
+    justify-content: space-around;
+}
+
+.lista {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem;
+    list-style: none;
+}
+
+.icones {
+    font-size: 1rem;
+}
+.link {
+    color: black;
+    text-decoration: none;
+    font-weight: 450;
+    text-transform: capitalize;
+}
+
+.button {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid black;
+    height: 100%;
+    align-self: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.button:hover {
+    color: gray;
+    border-bottom: 1px solid gray;
+}

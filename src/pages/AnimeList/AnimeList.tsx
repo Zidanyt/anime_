@@ -103,7 +103,7 @@ const AnimeList: React.FC = () => {
   return (
     <div className={style.container}>
       <h1>Lista de Animes</h1>
-      <ul>
+      <ul className={style.cards}>
         {animes.map(anime => (
           <li key={anime.id}>
             <h2>{anime.title}</h2>

@@ -6,6 +6,7 @@ import Favoritos from './components/Favoritos'
 import Top10Animes from './components/Top10Animes'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
+import Navbar from './components/NavBar/Navbar';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
@@ -23,27 +24,8 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      {isLoggedIn && (
-        <nav>
-          <ul>
-            <li>
-              <Link to="/recent">Animes Recentes</Link>
-            </li>
-            <li>
-              <Link to="/favoritos">Favoritos</Link>
-            </li>
-            <li>
-              <Link to="/Top10Animes">Top 10</Link>
-            </li>
-            <li>
-              <Link to="/anime-list">Lista de Animes</Link>
-            </li>
-            <li>
-              <button onClick={handleLogout}>Sair</button>
-            </li>
-          </ul>
-        </nav>
-      )}
+      
+      {isLoggedIn && <Navbar handleLogout={handleLogout} />}
       
       <Routes>
         <Route path="/" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Register />} />

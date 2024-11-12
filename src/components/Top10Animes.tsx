@@ -7,7 +7,7 @@ interface Anime {
   genre: string
   description: string
   year: number
-  rating: number // Avaliação global
+  rating: number
   isTopTen: boolean
   userRating?: number  // Avaliação específica do usuário
   globalRating?: number // Avaliação global calculada (média)
