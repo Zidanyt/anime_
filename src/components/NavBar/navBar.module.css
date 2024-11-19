@@ -1,10 +1,11 @@
 .container {
-    background-color: white;
+    background-color: rgb(211, 211, 211);
     display: flex;
     justify-content: space-around;
 }
 
 .lista {
+    background-color: rgb(211, 211, 211);
     display: flex;
     gap: 2rem;
     padding: 1rem;
@@ -15,6 +16,7 @@
     font-size: 1rem;
 }
 .link {
+    background-color: rgb(211, 211, 211);
     color: black;
     text-decoration: none;
     font-weight: 450;
@@ -22,7 +24,7 @@
 }
 
 .button {
-    background-color: transparent;
+    background-color: rgb(211, 211, 211);
     border: none;
     border-bottom: 1px solid black;
     height: 100%;
@@ -30,9 +32,9 @@
     font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
+    transition: border-bottom .5s ease-in;
 }
 
 .button:hover {
-    color: gray;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid rgba(128, 128, 128, 0);
 }

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../../utils/axiosInstance'
-import axios from 'axios'
+import gif from '../../assets/R.gif'
 
 import style from './AnimeList.module.css';
+import axios from 'axios';
 
 interface Anime {
   id: string
@@ -10,6 +11,7 @@ interface Anime {
   genre: string
   description: string
   year: number
+  imageUrl: string
   ratings: Rating[]
   currentRating?: number
 }
@@ -46,7 +48,7 @@ const AnimeList: React.FC = () => {
 
   const fetchFavorites = async () => {
     try {
-      const response = await axiosInstance.get('/favorites')
+      const response = await axiosInstance.get(`/favorites/${userId}`)
       setFavorites(response.data.map((anime: Anime) => anime.id))
     } catch (error) {
       console.error('Error fetching favorites:', error)
@@ -62,10 +64,10 @@ const AnimeList: React.FC = () => {
   const toggleFavorite = async (animeId: string) => {
     try {
       if (favorites.includes(animeId)) {
-        await axiosInstance.delete(`/favorites/${animeId}`)
+        await axiosInstance.delete(`/favorites/${userId}/${animeId}`)
         setFavorites(favorites.filter(id => id !== animeId))
       } else {
-        await axiosInstance.post(`/favorites/${animeId}`)
+        await axiosInstance.post(`/favorites/${animeId}`, { userId })
         setFavorites([...favorites, animeId])
       }
     } catch (error) {
@@ -96,33 +98,47 @@ const AnimeList: React.FC = () => {
     }
   }
   
-  
-  if (loading) return <div>Loading...</div>
+  if (loading) return <div><img src={gif} alt="" /></div>
   if (error) return <div>{error}</div>
 
   return (
-    <div className={style.container}>
-      <h1>Lista de Animes</h1>
-      <ul className={style.cards}>
-        {animes.map(anime => (
-          <li key={anime.id}>
-            <h2>{anime.title}</h2>
-            <p>Gênero: {anime.genre}</p>
-            <p>{anime.description}</p>
-            <p>Ano: {anime.year}</p>
-            <p>Avaliação sua: {anime.currentRating ? anime.currentRating.toFixed(1) : 'Sem Avaliação'} / 5</p>
-            <button onClick={() => toggleFavorite(anime.id)}>
-              {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
-            </button>
-            <div>
-              <span>Avaliar: </span>
-              {[1, 2, 3, 4, 5].map(star => (
-                <button key={star} onClick={() => rateAnime(anime.id, star)}>{star}</button>
-              ))}
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div>
+      <h1 className={style.titulo}>Lista de Animes</h1>
+      <div className={style.container}>
+        <ul className={style.cards}>
+          {animes.map(anime => (
+            <li className={style.anime_card} key={anime.id}>
+              <h2 className={style.sub_titulo}>{anime.title}</h2>
+              {anime.imageUrl && <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />}
+              <p>Gênero: {anime.genre}</p>
+              <p>descrição: {anime.description}</p>
+              <p>Ano: {anime.year}</p>
+              <p>Sua avaliação: {anime.currentRating ? anime.currentRating.toFixed(1) : 'Sem Avaliação'}</p>
+              <div>
+                <span>Avaliar: </span>
+                {[1, 2, 3, 4, 5].map(star => (
+                  <button 
+                    key={star} 
+                    onClick={() => rateAnime(anime.id, star)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '1.5rem',
+                      color: anime.currentRating && anime.currentRating >= star ? 'gold' : 'gray'
+                    }}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+              <button className={style.button} onClick={() => toggleFavorite(anime.id)}>
+                {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }

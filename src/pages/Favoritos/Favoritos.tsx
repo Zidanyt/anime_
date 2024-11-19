@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import axiosInstance from '../utils/axiosInstance'
+import axiosInstance from '../../utils/axiosInstance'
+
+import style from './favoritos.module.css'
 
 interface Anime {
   id: string
@@ -8,13 +10,13 @@ interface Anime {
   description: string
   year: number
   rating: number
-  isTopTen: boolean
+  imageUrl: string
+  isFavorite: boolean
   userRating?: number
-  globalRating?: number
 }
 
-const Top10Animes: React.FC = () => {
-  const [topAnimes, setTopAnimes] = useState<Anime[]>([])
+const Favoritos: React.FC = () => {
+  const [favoriteAnimes, setFavoriteAnimes] = useState<Anime[]>([])
   const [favorites, setFavorites] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -24,18 +26,15 @@ const Top10Animes: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!userId) return
-      
+
       try {
         setLoading(true)
-        const [topResponse, favResponse] = await Promise.all([
-          axiosInstance.get('/top10', { params: { userId } }), 
+        const [favResponse] = await Promise.all([
           axiosInstance.get(`/favorites/${userId}`)
         ])
 
-        console.log('Top 10 response:', topResponse.data)
-        setTopAnimes(topResponse.data)
-
         console.log('Favorites response:', favResponse.data)
+        setFavoriteAnimes(favResponse.data)
         setFavorites(favResponse.data.map((anime: Anime) => anime.id))
       } catch (error) {
         console.error('Erro ao carregar os dados:', error)
@@ -51,17 +50,30 @@ const Top10Animes: React.FC = () => {
   const toggleFavorite = async (animeId: string) => {
     try {
       if (favorites.includes(animeId)) {
-        await axiosInstance.delete(`/favorites/${animeId}`, { params: { userId } })
-        setFavorites(prev => prev.filter(id => id !== animeId))
+        await axiosInstance.delete(`/favorites/${userId}/${animeId}`);
+
+        setFavorites(prev => prev.filter(id => id !== animeId));
+
+        setFavoriteAnimes(prevAnimes =>
+          prevAnimes.filter(anime => anime.id !== animeId)
+        );
       } else {
-        await axiosInstance.post(`/favorites/${animeId}`, { userId })
-        setFavorites(prev => [...prev, animeId])
+        const response = await axiosInstance.post(`/favorites/${animeId}`, { userId });
+        const anime = response.data;
+
+        setFavorites(prev => [...prev, animeId]);
+
+        setFavoriteAnimes(prevAnimes => [
+          ...prevAnimes,
+          { ...anime, isFavorite: true }
+        ]);
       }
     } catch (error) {
-      console.error('Falha ao atualizar favorito:', error)
-      setErrorMessage('Falha ao atualizar o status de favorito.')
+      console.error('Falha ao atualizar favorito:', error);
+      setErrorMessage('Falha ao atualizar o status de favorito.');
     }
-  }
+  };
+
 
   const rateAnime = async (animeId: string, rating: number) => {
     if (rating < 1 || rating > 5) {
@@ -74,7 +86,7 @@ const Top10Animes: React.FC = () => {
 
       console.log('Resposta após enviar avaliação:', response.data)
 
-      setTopAnimes(prevAnimes =>
+      setFavoriteAnimes(prevAnimes =>
         prevAnimes.map(anime =>
           anime.id === animeId ? { ...anime, userRating: rating } : anime
         )
@@ -90,24 +102,21 @@ const Top10Animes: React.FC = () => {
 
   return (
     <div>
-      <h1>Top 10 Animes</h1>
+      <h1>Favoritos</h1>
       <ul>
-        {topAnimes.map(anime => (
+        {favoriteAnimes.map(anime => (
           <li key={anime.id}>
             <h2>{anime.title}</h2>
+            {anime.imageUrl && <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />}
             <p>Gênero: {anime.genre}</p>
             <p>{anime.description}</p>
             <p>Ano: {anime.year}</p>
-            <p>
-              Avaliação global: {anime.globalRating ? `${anime.globalRating.toFixed(1)} / 5` : 'Sem Avaliação'}
-            </p>
             <p>
               Avaliação sua: {anime.userRating !== undefined ? `${anime.userRating} / 5` : 'Sem Avaliação'}
             </p>
             <button onClick={() => toggleFavorite(anime.id)}>
               {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
             </button>
-
             <div>
               <span>Avaliar: </span>
               {[1, 2, 3, 4, 5].map(star => (
@@ -123,4 +132,4 @@ const Top10Animes: React.FC = () => {
   )
 }
 
-export default Top10Animes
+export default Favoritos
