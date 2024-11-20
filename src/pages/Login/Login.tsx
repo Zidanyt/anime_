@@ -18,8 +18,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     e.preventDefault()
     try {
       const response = await axios.post('/login', { email, password })
-      localStorage.setItem('token', response.data.token)
-      localStorage.setItem('userId', response.data.userId)
+      sessionStorage.setItem('token', response.data.token)
+      sessionStorage.setItem('userId', response.data.userId)
       onLogin()
       navigate('/anime-list')
     } catch (error) {

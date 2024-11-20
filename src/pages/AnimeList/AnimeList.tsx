@@ -29,7 +29,7 @@ const AnimeList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const userId = localStorage.getItem('userId') || ''
+  const userId = sessionStorage.getItem('userId') || ''
 
   const fetchAnimes = async () => {
     try {
@@ -98,7 +98,7 @@ const AnimeList: React.FC = () => {
     }
   }
   
-  if (loading) return <div><img src={gif} alt="" /></div>
+  if (loading) return <div className={style.container__gif}><img className={style.gif} src={gif} alt="" /></div>
   if (error) return <div>{error}</div>
 
   return (

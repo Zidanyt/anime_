@@ -24,6 +24,7 @@
     border-radius: 15px;
     padding: 1rem;
     width: 250px;
+    gap: .2rem;
 }
 
 .animeImage {
@@ -54,4 +55,17 @@
     font-weight: bold;
     padding: 10px 0;
     text-transform: capitalize;
+}
+
+.container__gif {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gif {
+    height: 20rem;
+    width: 20rem;
 }

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../../utils/axiosInstance'
+import gif from '../../assets/R.gif'
+
 
 import style from './favoritos.module.css'
 
@@ -21,7 +23,7 @@ const Favoritos: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const userId = localStorage.getItem('userId') || ''
+  const userId = sessionStorage.getItem('userId') || ''
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,60 +76,31 @@ const Favoritos: React.FC = () => {
     }
   };
 
-
-  const rateAnime = async (animeId: string, rating: number) => {
-    if (rating < 1 || rating > 5) {
-      setErrorMessage('A avaliação deve estar entre 1 e 5.')
-      return
-    }
-
-    try {
-      const response = await axiosInstance.post(`/animes/${animeId}/rate`, { userId, stars: rating })
-
-      console.log('Resposta após enviar avaliação:', response.data)
-
-      setFavoriteAnimes(prevAnimes =>
-        prevAnimes.map(anime =>
-          anime.id === animeId ? { ...anime, userRating: rating } : anime
-        )
-      )
-    } catch (error) {
-      console.error('Falha ao submeter avaliação:', error)
-      setErrorMessage('Falha ao submeter avaliação.')
-    }
-  }
-
-  if (loading) return <div>Carregando...</div>
+  if (loading) return <div className={style.container__gif}><img className={style.gif} src={gif} alt="" /></div>
   if (errorMessage) return <div>{errorMessage}</div>
 
   return (
     <div>
-      <h1>Favoritos</h1>
-      <ul>
-        {favoriteAnimes.map(anime => (
-          <li key={anime.id}>
-            <h2>{anime.title}</h2>
-            {anime.imageUrl && <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />}
-            <p>Gênero: {anime.genre}</p>
-            <p>{anime.description}</p>
-            <p>Ano: {anime.year}</p>
-            <p>
+      <h1 className={style.titulo}>Favoritos</h1>
+      <div className={style.container}>
+        <ul className={style.cards}>
+          {favoriteAnimes.map(anime => (
+            <li className={style.anime_card} key={anime.id}>
+              <h2 className={style.sub_titulo}>{anime.title}</h2>
+              {anime.imageUrl && <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />}
+              <p>Gênero: {anime.genre}</p>
+              <p>{anime.description}</p>
+              <p>Ano: {anime.year}</p>
+              <p>
               Avaliação sua: {anime.userRating !== undefined ? `${anime.userRating} / 5` : 'Sem Avaliação'}
             </p>
-            <button onClick={() => toggleFavorite(anime.id)}>
-              {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
-            </button>
-            <div>
-              <span>Avaliar: </span>
-              {[1, 2, 3, 4, 5].map(star => (
-                <button key={star} onClick={() => rateAnime(anime.id, star)}>
-                  {star}
-                </button>
-              ))}
-            </div>
-          </li>
-        ))}
-      </ul>
+              <button className={style.button} onClick={() => toggleFavorite(anime.id)}>
+                {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }

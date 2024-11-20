@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import AnimeList from './pages/AnimeList/AnimeList'
 import RecentAnimeList from './components/RecentAnimeList'
 import Favoritos from './pages/Favoritos/Favoritos'
-import Top10Animes from './components/Top10Animes'
+import Top10Animes from './pages/Top10Animes/Top10Animes'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
 import Navbar from './components/NavBar/Navbar';
@@ -12,13 +12,13 @@ const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
+    const token = sessionStorage.getItem('token')
     setIsLoggedIn(!!token)
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('userId')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('userId')
     setIsLoggedIn(false)
   }
 
