@@ -59,9 +59,7 @@
 @media (max-width: 500px) {
     .formulario {
     width: 18rem;
-    border: 1px solid black;
     padding: 1rem;
-    border-radius: 15px;
     }
 
     .formulario_button {
