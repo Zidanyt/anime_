@@ -13,25 +13,25 @@
   }
   
   .lista {
-    display: none; /* Inicialmente escondido */
+    display: none;
     list-style: none;
     padding: 0;
     margin: 0;
-    position: absolute; /* Posicionamento absoluto para o menu */
-    top: 100%; /* Logo abaixo do container */
+    position: absolute;
+    top: 100%;
     left: 0;
     width: 100%;
     background-color: rgb(211, 211, 211);
     flex-direction: column;
     z-index: 10;
     transition: transform 0.3s ease, opacity 0.3s ease;
-    transform: translateY(-100%); /* Fora da tela */
+    transform: translateY(-100%);
     opacity: 0;
   }
   
   .open {
-    display: flex; /* Torna o menu visível */
-    transform: translateY(0); /* Move o menu para dentro da tela */
+    display: flex;
+    transform: translateY(0);
     opacity: 1;
   }
   
@@ -62,31 +62,26 @@
     font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
-    transition: border-bottom 0.5s ease-in;
   }
   
-  .button:hover {
-    border-bottom: 1px solid rgba(128, 128, 128, 0);
-  }
   
-  /* Regras de responsividade */
   @media (max-width: 520px) {
     .hamburger {
       display: block;
     }
   
     .lista {
-      display: none; /* Sempre escondido inicialmente */
+      display: none;
     }
   
     .open {
-      display: flex; /* Exibe o menu quando ativo */
+      display: flex;
     }
   }
   
   @media (min-width: 521px) {
     .lista {
-      display: flex; /* Exibe o menu normalmente */
+      display: flex;
       position: static;
       flex-direction: row;
       transform: none;
@@ -94,7 +89,7 @@
     }
   
     .hamburger {
-      display: none; /* Esconde o botão hambúrguer */
+      display: none;
     }
   }
   
