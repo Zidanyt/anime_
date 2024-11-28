@@ -82,7 +82,7 @@ const Top10Animes: React.FC = () => {
               <h2 className={style.sub_titulo}>{anime.title}</h2>
               {anime.imageUrl && <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />}
               <p>Gênero: {anime.genre}</p>
-              <p>{anime.description}</p>
+              <p>descrição: {anime.description}</p>
               <p>Ano: {anime.year}</p>
               <p>
                 Avaliação global:{' '}

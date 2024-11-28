@@ -7,3 +7,6 @@ npm install
 npm install axios
 
 npm run build
+
+
+@ carosel animado dividido por seção @

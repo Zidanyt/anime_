@@ -56,6 +56,9 @@
     font-weight: bold;
     padding: 10px 0;
     text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .container__gif {

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../utils/axiosInstance'
 import gif from '../../assets/R.gif'
 
-import style from './AnimeList.module.css';
-import axios from 'axios';
+import style from './AnimeList.module.css'
+import axios from 'axios'
 
 interface Anime {
   id: string
@@ -30,6 +31,7 @@ const AnimeList: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
 
   const userId = sessionStorage.getItem('userId') || ''
+  const navigate = useNavigate() // Hook para navegar
 
   const fetchAnimes = async () => {
     try {
@@ -60,7 +62,6 @@ const AnimeList: React.FC = () => {
     fetchFavorites()
   }, [])
 
-
   const toggleFavorite = async (animeId: string) => {
     try {
       if (favorites.includes(animeId)) {
@@ -84,9 +85,7 @@ const AnimeList: React.FC = () => {
     try {
       const response = await axiosInstance.post(`/animes/${animeId}/rate`, { userId, stars: rating })
       console.log('Anime rated successfully:', response.data)
-  
       await fetchAnimes()
-  
     } catch (error: unknown) {
       console.error('Error rating anime:', error)
       if (axios.isAxiosError(error)) {
@@ -97,7 +96,11 @@ const AnimeList: React.FC = () => {
       }
     }
   }
-  
+
+  const handleCardClick = (animeId: string) => {
+    navigate(`/animes/${animeId}`) // Use navigate para redirecionar
+  }
+
   if (loading) return <div className={style.container__gif}><img className={style.gif} src={gif} alt="" /></div>
   if (error) return <div>{error}</div>
 
@@ -107,7 +110,7 @@ const AnimeList: React.FC = () => {
       <div className={style.container}>
         <ul className={style.cards}>
           {animes.map(anime => (
-            <li className={style.anime_card} key={anime.id}>
+            <li className={style.anime_card} key={anime.id} onClick={() => handleCardClick(anime.id)}>
               <h2 className={style.sub_titulo}>{anime.title}</h2>
               {anime.imageUrl && <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />}
               <p>Gênero: {anime.genre}</p>
@@ -119,7 +122,10 @@ const AnimeList: React.FC = () => {
                 {[1, 2, 3, 4, 5].map(star => (
                   <button 
                     key={star} 
-                    onClick={() => rateAnime(anime.id, star)}
+                    onClick={(e) => {
+                      e.stopPropagation() // Evita acionar o clique no card
+                      rateAnime(anime.id, star)
+                    }}
                     style={{
                       background: 'none',
                       border: 'none',
@@ -132,7 +138,10 @@ const AnimeList: React.FC = () => {
                   </button>
                 ))}
               </div>
-              <button className={style.button} onClick={() => toggleFavorite(anime.id)}>
+              <button className={style.button} onClick={(e) => {
+                e.stopPropagation() // Evita acionar o clique no card
+                toggleFavorite(anime.id)
+              }}>
                 {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
               </button>
             </li>
