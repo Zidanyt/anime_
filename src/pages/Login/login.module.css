@@ -44,17 +44,43 @@
     padding: .5rem;
     align-self: flex-end;
     cursor: pointer;
-    background-color:  rgb(0, 255, 0);
+    background-color: rgb(0, 255, 0);
     border: none;
     border-radius: 15px;
     font-size: .9rem;
     color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
 
+.formulario_button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid white;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
 }
 
 .formulario_link {
     text-decoration: none;
     color: rgb(0, 255, 0);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @media (max-width: 500px) {

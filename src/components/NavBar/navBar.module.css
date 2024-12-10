@@ -1,5 +1,5 @@
 .container {
-    background-color: rgb(211, 211, 211);
+    background-color: rgba(11, 21, 43, 0.781);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -21,7 +21,6 @@
     top: 100%;
     left: 0;
     width: 100%;
-    background-color: rgb(211, 211, 211);
     flex-direction: column;
     z-index: 10;
     transition: transform 0.3s ease, opacity 0.3s ease;
@@ -41,13 +40,14 @@
   }
   
   .link {
-    color: black;
+    color: white;
     text-decoration: none;
     font-weight: 450;
     text-transform: capitalize;
   }
   
   .hamburger {
+    color: white;
     display: none;
     background: none;
     border: none;
@@ -57,7 +57,8 @@
   }
   
   .button {
-    background-color: rgb(211, 211, 211);
+    color: white;
+    background-color: transparent;
     border: none;
     font-weight: bold;
     text-transform: uppercase;
@@ -71,7 +72,9 @@
     }
   
     .lista {
+      background-color: rgba(2, 8, 20, 0.781);
       display: none;
+      border-radius: 0px 0px 15px 15px;
     }
   
     .open {

@@ -88,10 +88,6 @@ const Top10Animes: React.FC = () => {
                 Avaliação global:{' '}
                 {anime.globalRating ? `${anime.globalRating.toFixed(1)} / 5` : 'Avalie'}
               </p>
-              <p>
-                Avaliação sua:{' '}
-                {anime.userRating !== undefined ? `${anime.userRating} / 5` : 'Sem Avaliação'}
-              </p>
               <button className={style.button} onClick={() => toggleFavorite(anime.id)}>
                 {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
               </button>

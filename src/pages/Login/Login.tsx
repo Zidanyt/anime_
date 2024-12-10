@@ -9,24 +9,28 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const navigate = useNavigate()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await axios.post('/login', { email, password })
-      sessionStorage.setItem('token', response.data.token)
-      sessionStorage.setItem('userId', response.data.userId)
-      onLogin()
-      navigate('/anime-list')
+      const response = await axios.post('/login', { email, password });
+      sessionStorage.setItem('token', response.data.token);
+      sessionStorage.setItem('userId', response.data.userId);
+      onLogin();
+      navigate('/anime-list');
     } catch (error) {
-      console.error('Erro no login:', error)
-      setErrorMessage('Email ou senha incorretos.')
+      console.error('Erro no login:', error);
+      setErrorMessage('Email ou senha incorretos.');
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className={style.conteiner}>
@@ -48,13 +52,20 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button className={style.formulario_button} type="submit">Entrar</button>
+        <button
+          className={`${style.formulario_button} ${isLoading ? style.loading : ''}`}
+          type="submit"
+          disabled={isLoading}
+        >
+          {isLoading ? <span className={style.spinner}></span> : 'Entrar'}
+        </button>
         <p>Não tem uma conta? <Link className={style.formulario_link} to="/">Cadastre-se</Link></p>
         
         {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
+

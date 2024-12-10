@@ -5,34 +5,38 @@ import { useNavigate, Link } from 'react-router-dom'
 import style from './Register.module.css';
 
 const Register: React.FC = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-  const navigate = useNavigate()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccessMessage(null)
+    e.preventDefault();
+    setError(null);
+    setSuccessMessage(null);
+    setIsLoading(true);
 
     try {
-      const response = await axiosInstance.post('/register', { email, password })
-      console.log('Registro bem-sucedido:', response.data)
-      setSuccessMessage('Cadastro realizado com sucesso!')
+      const response = await axiosInstance.post('/register', { email, password });
+      console.log('Registro bem-sucedido:', response.data);
+      setSuccessMessage('Cadastro realizado com sucesso!');
       setTimeout(() => {
-        navigate('/login')
-      }, 2000)
+        navigate('/login');
+      }, 2000);
     } catch (error) {
-      console.error('Erro no registro:', error)
-      setError('Erro ao realizar o cadastro.')
+      console.error('Erro no registro:', error);
+      setError('Erro ao realizar o cadastro.');
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className={style.conteiner}>
       <form className={style.formulario} onSubmit={handleSubmit}>
-      <h2>Cadastro</h2>
+        <h2>Cadastro</h2>
         <input
           className={style.formulario_input}
           type="email"
@@ -49,15 +53,21 @@ const Register: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button className={style.formulario_button} type="submit">Cadastrar</button>
+        <button
+          className={`${style.formulario_button} ${isLoading ? style.loading : ''}`}
+          type="submit"
+          disabled={isLoading}
+        >
+          {isLoading ? <span className={style.spinner}></span> : 'Cadastrar'}
+        </button>
         <p>Já tem uma conta? <Link className={style.formulario_link} to="/login">Faça login</Link></p>
       </form>
 
       {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
       {error && <div style={{ color: 'red' }}>{error}</div>}
-    
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
+
