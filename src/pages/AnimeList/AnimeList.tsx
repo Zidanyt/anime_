@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axiosInstance from '../../utils/axiosInstance'
 import gif from '../../assets/R.gif'
+import axios from 'axios'
 
 import style from './AnimeList.module.css'
-import axios from 'axios'
 
 interface Anime {
   id: string
@@ -29,17 +29,25 @@ const AnimeList: React.FC = () => {
   const [favorites, setFavorites] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [pages, setPages] = useState<{ [genre: string]: number }>({})
+  const [itemsPerPage, setItemsPerPage] = useState<number>(4)
 
   const userId = sessionStorage.getItem('userId') || ''
-  const navigate = useNavigate() // Hook para navegar
+  const navigate = useNavigate()
 
   const fetchAnimes = async () => {
     try {
-      const response = await axiosInstance.get('/animes', {
-        params: { userId }
-      })
+      const response = await axiosInstance.get('/animes', { params: { userId } })
       console.log('Animes carregados:', response.data)
       setAnimes(response.data)
+      const initialPages: { [genre: string]: number } = {}
+      response.data.forEach((anime: Anime) => {
+        const normalizedGenre = anime.genre.split(',')[0].trim().toLowerCase()
+        if (!(normalizedGenre in initialPages)) {
+          initialPages[normalizedGenre] = 0
+        }
+      })
+      setPages(initialPages)
     } catch (error) {
       console.error('Error fetching animes:', error)
       setError('Failed to fetch animes.')
@@ -61,6 +69,32 @@ const AnimeList: React.FC = () => {
     fetchAnimes()
     fetchFavorites()
   }, [])
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 600) {
+        setItemsPerPage(1)
+      } else if (window.innerWidth < 900) {
+        setItemsPerPage(2)
+      } else if (window.innerWidth < 1200) {
+        setItemsPerPage(3)
+      } else {
+        setItemsPerPage(4)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    const newPages: { [genre: string]: number } = {}
+    animes.forEach(anime => {
+      const normalizedGenre = anime.genre.split(',')[0].trim().toLowerCase()
+      newPages[normalizedGenre] = 0
+    })
+    setPages(newPages)
+  }, [itemsPerPage, animes])
 
   const toggleFavorite = async (animeId: string) => {
     try {
@@ -98,56 +132,123 @@ const AnimeList: React.FC = () => {
   }
 
   const handleCardClick = (animeId: string) => {
-    navigate(`/animes/${animeId}`) // Use navigate para redirecionar
+    navigate(`/animes/${animeId}`)
   }
 
-  if (loading) return <div className={style.container__gif}><img className={style.gif} src={gif} alt="" /></div>
+  if (loading)
+    return (
+      <div className={style.container__gif}>
+        <img className={style.gif} src={gif} alt="Carregando..." />
+      </div>
+    )
   if (error) return <div>{error}</div>
+
+  const groupedAnimes = animes.reduce(
+    (acc: { [key: string]: { display: string, items: Anime[] } }, anime) => {
+      const rawGenre = anime.genre.split(',')[0].trim()
+      const normalizedGenre = rawGenre.toLowerCase()
+      if (!acc[normalizedGenre]) {
+        acc[normalizedGenre] = { display: rawGenre, items: [] }
+      }
+      acc[normalizedGenre].items.push(anime)
+      return acc
+    },
+    {}
+  )
 
   return (
     <div>
       <h1 className={style.titulo}>Lista de Animes</h1>
-      <div className={style.container}>
-        <ul className={style.cards}>
-          {animes.map(anime => (
-            <li className={style.anime_card} key={anime.id} onClick={() => handleCardClick(anime.id)}>
-              <h2 className={style.sub_titulo}>{anime.title}</h2>
-              {anime.imageUrl && <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />}
-              <p>Gênero: {anime.genre}</p>
-              <p>descrição: {anime.description}</p>
-              <p>Ano: {anime.year}</p>
-              <p>Sua avaliação: {anime.currentRating ? anime.currentRating.toFixed(1) : 'Sem Avaliação'}</p>
-              <div>
-                <span>Avaliar: </span>
-                {[1, 2, 3, 4, 5].map(star => (
-                  <button 
-                    key={star} 
-                    onClick={(e) => {
-                      e.stopPropagation() // Evita acionar o clique no card
-                      rateAnime(anime.id, star)
-                    }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '1.5rem',
-                      color: anime.currentRating && anime.currentRating >= star ? 'gold' : 'gray'
-                    }}
-                  >
-                    ★
-                  </button>
+      {Object.entries(groupedAnimes).map(([normalizedGenre, group]) => {
+        const currentPage = pages[normalizedGenre] || 0
+        const startIndex = currentPage * itemsPerPage
+        const endIndex = startIndex + itemsPerPage
+        const paginatedAnimes = group.items.slice(startIndex, endIndex)
+        const totalPages = Math.ceil(group.items.length / itemsPerPage)
+
+        return (
+          <div key={normalizedGenre}>
+            <h2 className={style.sub_titulo}>{group.display}</h2>
+            <div className={style.container}>
+              <ul className={style.cards}>
+                {paginatedAnimes.map(anime => (
+                  <li
+                  className={`${style.anime_card} ${style[normalizedGenre]}`}
+                  key={anime.id}
+                  onClick={() => handleCardClick(anime.id)}
+                >                
+                    <h3>{anime.title}</h3>
+                    {anime.imageUrl && (
+                      <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />
+                    )}
+                    <span className={style.conteudo_anime}>
+                      <p>Gênero: {anime.genre}</p>
+                      <p>Descrição: {anime.description}</p>
+                      <p>Ano: {anime.year}</p>
+                    </span>
+                    <p>
+                      Sua avaliação:{' '}
+                      {anime.currentRating ? anime.currentRating.toFixed(1) : 'Sem Avaliação'}
+                    </p>
+                    <div>
+                      <span>Avaliar: </span>
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <button
+                          key={star}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            rateAnime(anime.id, star)
+                          }}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '1.5rem',
+                            color:
+                              anime.currentRating && anime.currentRating >= star ? 'gold' : 'gray'
+                          }}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      className={style.button}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleFavorite(anime.id)
+                      }}
+                    >
+                      {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
+                    </button>
+                  </li>
                 ))}
-              </div>
-              <button className={style.button} onClick={(e) => {
-                e.stopPropagation() // Evita acionar o clique no card
-                toggleFavorite(anime.id)
-              }}>
-                {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
+              </ul>
+            </div>
+            <div className={style.pagination}>
+              <button
+                onClick={() =>
+                  setPages({ ...pages, [normalizedGenre]: currentPage - 1 })
+                }
+                disabled={currentPage === 0}
+              >
+                Anterior
               </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+              <span>
+                {currentPage + 1} de {totalPages}
+              </span>
+              <button
+                onClick={() =>
+                  setPages({ ...pages, [normalizedGenre]: currentPage + 1 })
+                }
+                disabled={currentPage + 1 >= totalPages}
+              >
+                Próximo
+              </button>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
