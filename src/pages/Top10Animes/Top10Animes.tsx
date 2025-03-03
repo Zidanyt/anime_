@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
-import gif from '../../assets/R.gif'
-
-import style from './Top10Animes.module.css' 
+import gif from '../../assets/R.gif';
+import { useSearch } from '../../SearchContext'; 
+import style from './Top10Animes.module.css';
 
 interface Anime {
   id: string;
@@ -14,14 +14,16 @@ interface Anime {
   isTopTen: boolean;
   userRating?: number;
   globalRating?: number;
-  imageUrl: string
+  imageUrl: string;
 }
 
 const Top10Animes: React.FC = () => {
   const [topAnimes, setTopAnimes] = useState<Anime[]>([]);
+  const [filteredAnimes, setFilteredAnimes] = useState<Anime[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { searchTerm } = useSearch();
 
   const userId = sessionStorage.getItem('userId') || '';
 
@@ -38,10 +40,12 @@ const Top10Animes: React.FC = () => {
 
         const sortedAnimes = topResponse.data.sort(
           (a: Anime, b: Anime) =>
-            (b.globalRating ?? 0) - (a.globalRating ?? 0) || a.title.localeCompare(b.title)
+            (b.globalRating ?? 0) - (a.globalRating ?? 0) ||
+            a.title.localeCompare(b.title)
         );
 
         setTopAnimes(sortedAnimes);
+        setFilteredAnimes(sortedAnimes);
         setFavorites(favResponse.data.map((anime: Anime) => anime.id));
       } catch (error) {
         console.error('Erro ao carregar os dados:', error);
@@ -54,10 +58,19 @@ const Top10Animes: React.FC = () => {
     fetchData();
   }, [userId]);
 
+  useEffect(() => {
+    const filtered = topAnimes.filter((anime) =>
+      anime.title.toLowerCase().startsWith(searchTerm.toLowerCase())
+    );
+    setFilteredAnimes(filtered);
+  }, [searchTerm, topAnimes]);
+
   const toggleFavorite = async (animeId: string) => {
     try {
       if (favorites.includes(animeId)) {
-        await axiosInstance.delete(`/favorites/${animeId}`, { params: { userId } });
+        await axiosInstance.delete(`/favorites/${animeId}`, {
+          params: { userId },
+        });
         setFavorites((prev) => prev.filter((id) => id !== animeId));
       } else {
         await axiosInstance.post(`/favorites/${animeId}`, { userId });
@@ -69,7 +82,12 @@ const Top10Animes: React.FC = () => {
     }
   };
 
-  if (loading) return <div className={style.container__gif}><img className={style.gif} src={gif} alt="" /></div>
+  if (loading)
+    return (
+      <div className={style.container__gif}>
+        <img className={style.gif} src={gif} alt="" />
+      </div>
+    );
   if (errorMessage) return <div>{errorMessage}</div>;
 
   return (
@@ -77,19 +95,32 @@ const Top10Animes: React.FC = () => {
       <h1 className={style.titulo}>Top 10 Animes</h1>
       <div className={style.container}>
         <ul className={style.cards}>
-          {topAnimes.map((anime) => (
+          {filteredAnimes.map((anime) => (
             <li className={style.anime_card} key={anime.id}>
               <h2 className={style.sub_titulo}>{anime.title}</h2>
-              {anime.imageUrl && <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />}
+              {anime.imageUrl && (
+                <img
+                  src={anime.imageUrl}
+                  alt={anime.title}
+                  className={style.animeImage}
+                />
+              )}
               <p>Gênero: {anime.genre}</p>
               <p>descrição: {anime.description}</p>
               <p>Ano: {anime.year}</p>
               <p>
                 Avaliação global:{' '}
-                {anime.globalRating ? `${anime.globalRating.toFixed(1)} / 5` : 'Avalie'}
+                {anime.globalRating
+                  ? `${anime.globalRating.toFixed(1)} / 5`
+                  : 'Avalie'}
               </p>
-              <button className={style.button} onClick={() => toggleFavorite(anime.id)}>
-                {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
+              <button
+                className={style.button}
+                onClick={() => toggleFavorite(anime.id)}
+              >
+                {favorites.includes(anime.id)
+                  ? 'Remover dos Favoritos'
+                  : 'Favoritar'}
               </button>
             </li>
           ))}

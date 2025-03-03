@@ -1,6 +1,9 @@
+// Navbar.tsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { FiSearch } from 'react-icons/fi';
 import style from './navBar.module.css';
+import { useSearch } from '../../SearchContext';
 
 interface NavbarProps {
   handleLogout: () => void;
@@ -8,8 +11,15 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { setSearchTerm } = useSearch();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <nav className={style.container}>
@@ -31,6 +41,19 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
             <Link className={style.link} to="/anime-list">Lista de Animes</Link>
           </li>
         </ul>
+      </div>
+      <div className={style.searchContainer}>
+        {isSearchOpen && (
+          <input
+            type="text"
+            className={style.searchInput}
+            placeholder="Pesquisar..."
+            onChange={handleSearchChange}
+          />
+        )}
+        <button className={style.searchButton} onClick={toggleSearch}>
+          <FiSearch size={20} color={'white'} />
+        </button>
       </div>
       <button className={style.button} onClick={handleLogout}>Sair</button>
     </nav>

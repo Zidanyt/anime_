@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import axiosInstance from '../../utils/axiosInstance'
-import gif from '../../assets/R.gif'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../../utils/axiosInstance';
+import gif from '../../assets/R.gif';
+import axios from 'axios';
+import { useSearch } from '../../SearchContext'; ;
 
 import style from './AnimeList.module.css'
 
@@ -25,76 +26,86 @@ interface Rating {
 }
 
 const AnimeList: React.FC = () => {
-  const [animes, setAnimes] = useState<Anime[]>([])
-  const [favorites, setFavorites] = useState<string[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
-  const [pages, setPages] = useState<{ [genre: string]: number }>({})
-  const [itemsPerPage, setItemsPerPage] = useState<number>(4)
+  const [animes, setAnimes] = useState<Anime[]>([]);
+  const [filteredAnimes, setFilteredAnimes] = useState<Anime[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [pages, setPages] = useState<{ [genre: string]: number }>({});
+  const [itemsPerPage, setItemsPerPage] = useState<number>(4);
+  const { searchTerm } = useSearch();
 
-  const userId = sessionStorage.getItem('userId') || ''
-  const navigate = useNavigate()
+  const userId = sessionStorage.getItem('userId') || '';
+  const navigate = useNavigate();
 
   const fetchAnimes = async () => {
     try {
-      const response = await axiosInstance.get('/animes', { params: { userId } })
-      console.log('Animes carregados:', response.data)
-      setAnimes(response.data)
-      const initialPages: { [genre: string]: number } = {}
+      const response = await axiosInstance.get('/animes', { params: { userId } });
+      console.log('Animes carregados:', response.data);
+      setAnimes(response.data);
+      setFilteredAnimes(response.data);
+      const initialPages: { [genre: string]: number } = {};
       response.data.forEach((anime: Anime) => {
-        const normalizedGenre = anime.genre.split(',')[0].trim().toLowerCase()
+        const normalizedGenre = anime.genre.split(',')[0].trim().toLowerCase();
         if (!(normalizedGenre in initialPages)) {
-          initialPages[normalizedGenre] = 0
+          initialPages[normalizedGenre] = 0;
         }
-      })
-      setPages(initialPages)
+      });
+      setPages(initialPages);
     } catch (error) {
-      console.error('Error fetching animes:', error)
-      setError('Failed to fetch animes.')
+      console.error('Error fetching animes:', error);
+      setError('Failed to fetch animes.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchFavorites = async () => {
     try {
-      const response = await axiosInstance.get(`/favorites/${userId}`)
-      setFavorites(response.data.map((anime: Anime) => anime.id))
+      const response = await axiosInstance.get(`/favorites/${userId}`);
+      setFavorites(response.data.map((anime: Anime) => anime.id));
     } catch (error) {
-      console.error('Error fetching favorites:', error)
+      console.error('Error fetching favorites:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchAnimes()
-    fetchFavorites()
-  }, [])
+    fetchAnimes();
+    fetchFavorites();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 600) {
-        setItemsPerPage(1)
+        setItemsPerPage(1);
       } else if (window.innerWidth < 900) {
-        setItemsPerPage(2)
+        setItemsPerPage(2);
       } else if (window.innerWidth < 1200) {
-        setItemsPerPage(3)
+        setItemsPerPage(3);
       } else {
-        setItemsPerPage(4)
+        setItemsPerPage(4);
       }
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
-    const newPages: { [genre: string]: number } = {}
-    animes.forEach(anime => {
-      const normalizedGenre = anime.genre.split(',')[0].trim().toLowerCase()
-      newPages[normalizedGenre] = 0
-    })
-    setPages(newPages)
-  }, [itemsPerPage, animes])
+    const newPages: { [genre: string]: number } = {};
+    animes.forEach((anime) => {
+      const normalizedGenre = anime.genre.split(',')[0].trim().toLowerCase();
+      newPages[normalizedGenre] = 0;
+    });
+    setPages(newPages);
+  }, [itemsPerPage, animes]);
+
+  useEffect(() => {
+    const filtered = animes.filter((anime) =>
+      anime.title.toLowerCase().startsWith(searchTerm.toLowerCase())
+    );
+    setFilteredAnimes(filtered);
+  }, [searchTerm, animes]);
 
   const toggleFavorite = async (animeId: string) => {
     try {
@@ -143,18 +154,19 @@ const AnimeList: React.FC = () => {
     )
   if (error) return <div>{error}</div>
 
-  const groupedAnimes = animes.reduce(
-    (acc: { [key: string]: { display: string, items: Anime[] } }, anime) => {
-      const rawGenre = anime.genre.split(',')[0].trim()
-      const normalizedGenre = rawGenre.toLowerCase()
+  const groupedAnimes = filteredAnimes.reduce(
+    (acc: { [key: string]: { display: string; items: Anime[] } }, anime) => {
+      const rawGenre = anime.genre.split(',')[0].trim();
+      const normalizedGenre = rawGenre.toLowerCase();
       if (!acc[normalizedGenre]) {
-        acc[normalizedGenre] = { display: rawGenre, items: [] }
+        acc[normalizedGenre] = { display: rawGenre, items: [] };
       }
-      acc[normalizedGenre].items.push(anime)
-      return acc
+      acc[normalizedGenre].items.push(anime);
+      return acc;
     },
     {}
-  )
+  );
+
 
   return (
     <div>
