@@ -15,6 +15,26 @@
   color: #fff;
 }
 
+.container__gif {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+}
+
+.gif {
+  filter: drop-shadow(0 0 0.75rem rgb(85, 24, 121));
+}
+
+.gif__carregando {
+  font-size: 2rem;
+  color: white;
+  filter: drop-shadow(0 0 0.75rem rgb(85, 24, 121));
+
+}
+
 h3 {
   white-space: nowrap;
   overflow: hidden;
@@ -23,7 +43,7 @@ h3 {
 
 .sub_titulo{
   text-align: center;
-  color: rgba(101, 101, 243, 0.808);
+  color: rgb(85, 24, 121);
 
 }
 

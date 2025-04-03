@@ -1,4 +1,3 @@
-// App.tsx
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import AnimeList from './pages/AnimeList/AnimeList';
@@ -32,11 +31,12 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Register />} />
           <Route path="/login" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Login onLogin={() => setIsLoggedIn(true)} />} />
-          <Route path="/animes/:animeId" element={isLoggedIn ? <AnimeDetails /> : <Navigate to="/login" />} />
+          <Route path="/animes/:id" element={isLoggedIn ? <AnimeDetails /> : <Navigate to="/login" />} />
           <Route path="/recent" element={isLoggedIn ? <RecentAnimeList /> : <Navigate to="/login" />} />
           <Route path="/favoritos" element={isLoggedIn ? <Favoritos /> : <Navigate to="/login" />} />
           <Route path="/Top10Animes" element={isLoggedIn ? <Top10Animes /> : <Navigate to="/login" />} />
-          <Route path="/anime-list" element={isLoggedIn ? <AnimeList /> : <Navigate to="/login" />} />
+          <Route path="/anime-list" element={isLoggedIn ? <AnimeList showGenres={false} /> : <Navigate to="/login" />} />
+          <Route path="/genres" element={isLoggedIn ? <AnimeList showGenres={true} /> : <Navigate to="/login" />} />
         </Routes>
       </SearchProvider>
     </Router>

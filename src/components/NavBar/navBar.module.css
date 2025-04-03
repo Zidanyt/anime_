@@ -68,6 +68,15 @@
     cursor: pointer;
   }
 
+  .button_alter {
+    color: white;
+    background-color: transparent;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: capitalize;
+  }
+
   .searchContainer {
     border-bottom: 1px solid black;
     width: 3rem;
@@ -97,13 +106,17 @@
   
   
   
-  @media (max-width: 520px) {
+  @media (max-width: 785px) {
+
+    .container {
+      border-radius: 0;
+    }
     .hamburger {
       display: block;
     }
   
     .lista {
-      background-color: rgba(2, 8, 20, 0.781);
+      background-color: rgb(2, 8, 20);
       display: none;
       border-radius: 0px 0px 15px 15px;
     }
@@ -113,7 +126,7 @@
     }
   }
   
-  @media (min-width: 521px) {
+  @media (min-width: 786px) {
     .lista {
       display: flex;
       position: static;
