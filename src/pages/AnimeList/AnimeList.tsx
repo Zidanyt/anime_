@@ -1,4 +1,3 @@
-
 // informaçõas sobre os autores(a).
 
 import React, { useEffect, useState } from 'react';
@@ -107,7 +106,7 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
 
   useEffect(() => {
     const filtered = animes.filter((anime) =>
-        anime.title.toLowerCase().startsWith(searchTerm.toLowerCase())
+      anime.title.toLowerCase().startsWith(searchTerm.toLowerCase())
     );
     console.log("Filtered Animes with IDs:", filtered.map(anime => ({ id: anime.id, title: anime.title })));
     setFilteredAnimes(filtered);
@@ -132,11 +131,22 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
       console.error('Rating must be between 1 and 5.')
       return
     }
-    
+
     try {
       const response = await axiosInstance.post(`/animes/${animeId}/rate`, { userId, stars: rating })
       console.log('Anime rated successfully:', response.data)
-      await fetchAnimes()
+
+      setAnimes(prevAnimes =>
+        prevAnimes.map(anime =>
+          anime.id === animeId ? { ...anime, currentRating: rating } : anime
+        )
+      );
+      setFilteredAnimes(prevFilteredAnimes =>
+        prevFilteredAnimes.map(anime =>
+          anime.id === animeId ? { ...anime, currentRating: rating } : anime
+        )
+      );
+
     } catch (error: unknown) {
       console.error('Error rating anime:', error)
       if (axios.isAxiosError(error)) {
@@ -157,10 +167,10 @@ if (loading)
   return (
     <div className={style.container__gif}>
       <img className={style.gif} src={gif} alt="Carregando..." />
-      <p className={style.gif__carregando}>Carregando...</p>
+      <p className={style.gif__carregando} translate="no">Carregando...</p>
     </div>
   );
-if (error) return <div>{error}</div>;
+if (error) return <div translate="no">{error}</div>;
 
 const groupedAnimes = filteredAnimes.reduce(
   (acc: { [key: string]: { display: string; items: Anime[] } }, anime) => {
@@ -177,8 +187,8 @@ const groupedAnimes = filteredAnimes.reduce(
 
 if (showGenres) {
   return (
-    <div>
-      <h1 className={style.titulo}>Gêneros</h1>
+    <div translate="no">
+      <h1 className={style.titulo} translate="no">Gêneros</h1>
       {Object.entries(groupedAnimes).map(([normalizedGenre, group]) => {
         const currentPage = pages[normalizedGenre] || 0;
         const startIndex = currentPage * itemsPerPage;
@@ -187,8 +197,8 @@ if (showGenres) {
         const totalPages = Math.ceil(group.items.length / itemsPerPage);
 
         return (
-          <div key={normalizedGenre}>
-            <h2 className={style.sub_titulo}>{group.display}</h2>
+          <div key={normalizedGenre} translate="no">
+            <h2 className={style.sub_titulo} translate="no">{group.display}</h2>
             <div className={style.container}>
               <ul className={style.cards}>
                 {paginatedAnimes.map(anime => (
@@ -196,22 +206,23 @@ if (showGenres) {
                     className={`${style.anime_card} ${style[normalizedGenre]}`}
                     key={anime.id}
                     onClick={() => handleCardClick(anime.id)}
+                    translate="no"
                   >
-                    <h3>{anime.title}</h3>
+                    <h3 translate="no">{anime.title}</h3>
                     {anime.imageUrl && (
                       <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />
                     )}
-                    <span className={style.conteudo_anime}>
+                    <span className={style.conteudo_anime} translate="no">
                       <p>Gênero: {anime.genre}</p>
                       <p>Descrição: {anime.description}</p>
                       <p>Ano: {anime.year}</p>
                     </span>
-                    <p>
+                    <p translate="no">
                       Sua avaliação:{' '}
                       {anime.currentRating ? anime.currentRating.toFixed(1) : 'Sem Avaliação'}
                     </p>
-                    <div>
-                      <span>Avaliar: </span>
+                    <div translate="no">
+                      <span translate="no">Avaliar: </span>
                       {[1, 2, 3, 4, 5].map(star => (
                         <button
                           key={star}
@@ -226,6 +237,7 @@ if (showGenres) {
                             fontSize: '1.5rem',
                             color: anime.currentRating && anime.currentRating >= star ? 'gold' : 'gray'
                           }}
+                          translate="no"
                         >
                           ★
                         </button>
@@ -237,6 +249,7 @@ if (showGenres) {
                         e.stopPropagation();
                         toggleFavorite(anime.id);
                       }}
+                      translate="no"
                     >
                       {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
                     </button>
@@ -244,16 +257,17 @@ if (showGenres) {
                 ))}
               </ul>
             </div>
-            <div className={style.pagination}>
+            <div className={style.pagination} translate="no">
               <button
                 onClick={() =>
                   setPages({ ...pages, [normalizedGenre]: currentPage - 1 })
                 }
                 disabled={currentPage === 0}
+                translate="no"
               >
                 Anterior
               </button>
-              <span>
+              <span translate="no">
                 {currentPage + 1} de {totalPages}
               </span>
               <button
@@ -261,6 +275,7 @@ if (showGenres) {
                   setPages({ ...pages, [normalizedGenre]: currentPage + 1 })
                 }
                 disabled={currentPage + 1 >= totalPages}
+                translate="no"
               >
                 Próximo
               </button>
@@ -275,8 +290,8 @@ if (showGenres) {
 const allAnimes = filteredAnimes.sort((a, b) => a.title.localeCompare(b.title));
 
 return (
-  <div>
-    <h1 className={style.titulo}>Lista de Animes</h1>
+  <div translate="no">
+    <h1 className={style.titulo} translate="no">Lista de Animes</h1>
     <div className={style.container}>
       <ul className={style.cards}>
         {allAnimes.map(anime => (
@@ -284,22 +299,23 @@ return (
             className={`${style.anime_card} ${style[anime.genre.split(',')[0].trim().toLowerCase()]}`}
             key={anime.id}
             onClick={() => handleCardClick(anime.id)}
+            translate="no"
           >
-            <h3>{anime.title}</h3>
+            <h3 translate="no">{anime.title}</h3>
             {anime.imageUrl && (
               <img src={anime.imageUrl} alt={anime.title} className={style.animeImage} />
             )}
-            <span className={style.conteudo_anime}>
+            <span className={style.conteudo_anime} translate="no">
               <p>Gênero: {anime.genre}</p>
               <p>Descrição: {anime.description}</p>
               <p>Ano: {anime.year}</p>
             </span>
-            <p>
+            <p translate="no">
               Sua avaliação:{' '}
               {anime.currentRating ? anime.currentRating.toFixed(1) : 'Sem Avaliação'}
             </p>
-            <div>
-              <span>Avaliar: </span>
+            <div translate="no">
+              <span translate="no">Avaliar: </span>
               {[1, 2, 3, 4, 5].map(star => (
                 <button
                   key={star}
@@ -314,6 +330,7 @@ return (
                     fontSize: '1.5rem',
                     color: anime.currentRating && anime.currentRating >= star ? 'gold' : 'gray'
                   }}
+                  translate="no"
                 >
                   ★
                 </button>
@@ -325,6 +342,7 @@ return (
                 e.stopPropagation();
                 toggleFavorite(anime.id);
               }}
+              translate="no"
             >
               {favorites.includes(anime.id) ? 'Remover dos Favoritos' : 'Favoritar'}
             </button>
