@@ -130,6 +130,10 @@ h3 {
   margin: 1rem 0;
 }
 
+.skip_button {
+  cursor: pointer;
+}
+
 
 
 @media (min-width: 600px) {

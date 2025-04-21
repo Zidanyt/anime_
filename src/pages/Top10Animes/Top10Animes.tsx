@@ -92,12 +92,12 @@ const Top10Animes: React.FC = () => {
 
   return (
     <div>
-      <h1 className={style.titulo}>Top 10 Animes</h1>
+      <h1 translate="no" className={style.titulo}>Top 10 Animes</h1>
       <div className={style.container}>
         <ul className={style.cards}>
           {filteredAnimes.map((anime) => (
             <li className={style.anime_card} key={anime.id}>
-              <h2 className={style.sub_titulo}>{anime.title}</h2>
+              <h2 translate="no" className={style.sub_titulo}>{anime.title}</h2>
               {anime.imageUrl && (
                 <img
                   src={anime.imageUrl}

@@ -35,7 +35,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   return (
     <div className={style.conteiner}>
       <form className={style.formulario} onSubmit={handleSubmit}>
-        <h2>Login</h2>
+        <h2 translate="no">Login</h2>
         <input
           className={style.formulario_input}
           type="email"

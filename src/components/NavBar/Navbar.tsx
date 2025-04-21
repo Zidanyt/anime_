@@ -50,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
                         <Link className={style.link} to="/favoritos">Favoritos</Link>
                     </li>
                     <li className={style.icones}>
-                        <Link className={style.link} to="/Top10Animes">Top 10</Link>
+                        <Link translate="no" className={style.link} to="/Top10Animes">Top 10</Link>
                     </li>
                     <li className={style.icones}>
                         <Link className={style.link} to="/anime-list">Lista de Animes</Link>

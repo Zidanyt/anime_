@@ -259,6 +259,7 @@ if (showGenres) {
             </div>
             <div className={style.pagination} translate="no">
               <button
+                className={style.skip_button}
                 onClick={() =>
                   setPages({ ...pages, [normalizedGenre]: currentPage - 1 })
                 }
@@ -271,6 +272,7 @@ if (showGenres) {
                 {currentPage + 1} de {totalPages}
               </span>
               <button
+                className={style.skip_button}
                 onClick={() =>
                   setPages({ ...pages, [normalizedGenre]: currentPage + 1 })
                 }

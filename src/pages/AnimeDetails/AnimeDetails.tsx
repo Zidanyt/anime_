@@ -157,7 +157,7 @@ const AnimeDetails: React.FC = () => {
   return (
     <div className={style.container}>
       <div className={style.content}>
-        <h1 className={style.title}>{anime?.title}</h1>
+        <h1 translate="no" className={style.title}>{anime?.title}</h1>
         {anime && <AnimeInfo anime={anime} />}
       </div>
       {anime?.imageUrl && (
