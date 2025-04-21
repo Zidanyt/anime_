@@ -48,7 +48,7 @@ const AnimeCharacters: React.FC<{ characters: Character[] }> = ({ characters }) 
             {character.imageUrl && (
               <img src={character.imageUrl} alt={character.name} className={style.characterImage} />
             )}
-            <span>{character.name}</span>
+            <span className={style.span__name}>{character.name}</span>
           </li>
         ))}
       </ul>
