@@ -36,7 +36,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 200px;
+  width: 210px;
   height: 100%;
   display: flex;                /* sempre existe no DOM */
   flex-direction: column;
@@ -177,7 +177,7 @@
 @media (max-width: 785px) {
 
   .icones {
-    padding: 0.9rem 1rem;
+    padding: 1rem 1rem;
   }
 
   .searchContainer {

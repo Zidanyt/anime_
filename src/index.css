@@ -9,6 +9,9 @@ body {
   background-color: rgb(11, 21, 43);
 }
 
-.container {
-  padding-top: 65px;
+
+@media (max-width: 785px) {
+  .container {
+    padding-top: 65px;
+  }
 }
