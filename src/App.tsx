@@ -28,16 +28,18 @@ const App: React.FC = () => {
     <Router>
       <SearchProvider>
         {isLoggedIn && <Navbar handleLogout={handleLogout} />}
-        <Routes>
-          <Route path="/" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Register />} />
-          <Route path="/login" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Login onLogin={() => setIsLoggedIn(true)} />} />
-          <Route path="/animes/:id" element={isLoggedIn ? <AnimeDetails /> : <Navigate to="/login" />} />
-          <Route path="/recent" element={isLoggedIn ? <RecentAnimeList /> : <Navigate to="/login" />} />
-          <Route path="/favoritos" element={isLoggedIn ? <Favoritos /> : <Navigate to="/login" />} />
-          <Route path="/Top10Animes" element={isLoggedIn ? <Top10Animes /> : <Navigate to="/login" />} />
-          <Route path="/anime-list" element={isLoggedIn ? <AnimeList showGenres={false} /> : <Navigate to="/login" />} />
-          <Route path="/genres" element={isLoggedIn ? <AnimeList showGenres={true} /> : <Navigate to="/login" />} />
-        </Routes>
+        <div className='container'>
+          <Routes>
+            <Route path="/" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Register />} />
+            <Route path="/login" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Login onLogin={() => setIsLoggedIn(true)} />} />
+            <Route path="/animes/:id" element={isLoggedIn ? <AnimeDetails /> : <Navigate to="/login" />} />
+            <Route path="/recent" element={isLoggedIn ? <RecentAnimeList /> : <Navigate to="/login" />} />
+            <Route path="/favoritos" element={isLoggedIn ? <Favoritos /> : <Navigate to="/login" />} />
+            <Route path="/Top10Animes" element={isLoggedIn ? <Top10Animes /> : <Navigate to="/login" />} />
+            <Route path="/anime-list" element={isLoggedIn ? <AnimeList showGenres={false} /> : <Navigate to="/login" />} />
+            <Route path="/genres" element={isLoggedIn ? <AnimeList showGenres={true} /> : <Navigate to="/login" />} />
+          </Routes>
+        </div>
       </SearchProvider>
     </Router>
   );
