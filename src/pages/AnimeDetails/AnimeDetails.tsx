@@ -29,35 +29,6 @@ interface Comment {
   };
 }
 
-const AnimeInfo: React.FC<{ anime: Anime }> = ({ anime }) => (
-  <div className={style.details}>
-    <p><strong>Gênero:</strong> {anime.genre}</p>
-    <p><strong>Descrição:</strong> {anime.description}</p>
-    <p><strong>Ano:</strong> {anime.year}</p>
-    <p><strong>Nota média:</strong> {anime.averageRating}</p>
-  </div>
-);
-
-const AnimeCharacters: React.FC<{ characters: Character[] }> = ({ characters }) => (
-  <div className={style.characters}>
-    <h2>Personagens</h2>
-    {characters && characters.length > 0 ? (
-      <ul className={style.charactersList}>
-        {characters.map((character) => (
-          <li key={character.id} className={style.characterItem}>
-            {character.imageUrl && (
-              <img src={character.imageUrl} alt={character.name} className={style.characterImage} />
-            )}
-            <span className={style.span__name}>{character.name}</span>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p>Nenhum personagem encontrado.</p>
-    )}
-  </div>
-);
-
 const AnimeDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [anime, setAnime] = useState<Anime | null>(null);
@@ -151,6 +122,36 @@ const AnimeDetails: React.FC = () => {
     }
   };
 
+  const AnimeInfo: React.FC<{ anime: Anime }> = ({ anime }) => (
+    <div className={style.details}>
+      <p><strong>Gênero:</strong> {anime.genre}</p>
+      <p><strong>Descrição:</strong> {anime.description}</p>
+      <p><strong>Ano:</strong> {anime.year}</p>
+      <p><strong>Nota média:</strong> {anime.averageRating}</p>
+      <p><strong>"sinopse"</strong></p>
+    </div>
+  );
+
+  const AnimeCharacters: React.FC<{ characters: Character[] }> = ({ characters }) => (
+    <div className={style.characters}>
+      <h2>Personagens</h2>
+      {characters && characters.length > 0 ? (
+        <ul className={style.charactersList}>
+          {characters.map((character) => (
+            <li key={character.id} className={style.characterItem}>
+              {character.imageUrl && (
+                <img src={character.imageUrl} alt={character.name} className={style.characterImage} />
+              )}
+              <span className={style.span__name}>{character.name}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Nenhum personagem encontrado.</p>
+      )}
+    </div>
+  );
+
   if (loading) return <div className={style.loader}>Carregando...</div>;
   if (error) return <div className={style.error}>{error}</div>;
 
@@ -160,24 +161,28 @@ const AnimeDetails: React.FC = () => {
         <h1 translate="no" className={style.title}>{anime?.title}</h1>
         {anime && <AnimeInfo anime={anime} />}
       </div>
-      {anime?.imageUrl && (
-        <img src={anime.imageUrl} alt={anime.title} className={style.image} />
-      )}
-      {anime && <AnimeCharacters characters={anime.characters} />}
       <div>
-        <h2>Comentários</h2>
-        <input
-          type="text"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Digite seu comentário..."
-        />
+        {anime?.imageUrl && (
+          <img src={anime.imageUrl} alt={anime.title} className={style.image} />
+        )}
+      </div>
+      {anime && <AnimeCharacters characters={anime.characters} />}
+      <div className={style.comments}>
+        <div className={style.commentSection}>
+          <h2>Comentários</h2>
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Digite seu comentário..."
+          />
+        </div>
         <button onClick={handleAddComment}>Adicionar Comentário</button>
-        <ul>
+        <ul className={style.commentsList}>
           {comments.map((comment) => (
-            <li key={comment.id}>
+            <li className={style.space} key={comment.id}>
               <strong>{comment.user.email}:</strong> {comment.text}
-              <button onClick={() => handleDeleteComment(comment.id)}>Apagar</button>
+              <button className={style.apagar} onClick={() => handleDeleteComment(comment.id)}>Apagar</button>
             </li>
           ))}
         </ul>

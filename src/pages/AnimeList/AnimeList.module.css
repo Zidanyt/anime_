@@ -1,5 +1,5 @@
 * {
-   translate: none; 
+   translate: none;
 }
 
 .container {
@@ -83,6 +83,10 @@ h3 {
   grid-template-columns: 1fr;
   border: 5px solid rgba(22, 42, 85, 0.753);
   border-radius: 25px;
+}
+
+.centered {
+  display: flex;
 }
 
 .anime_card {

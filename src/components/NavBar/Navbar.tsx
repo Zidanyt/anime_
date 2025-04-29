@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
 import style from './navBar.module.css';
 import { useSearch } from '../../SearchContext';
@@ -11,11 +11,13 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { setSearchTerm } = useSearch();
+  const { searchTerm, setSearchTerm } = useSearch();
   const menuRef = useRef<HTMLUListElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const location = useLocation();
+  const [activeItem, setActiveItem] = useState(location.pathname);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
-  // Abre/fecha menu e aplica classe no body
   const toggleMenu = () => {
     setIsMenuOpen(open => {
       const novo = !open;
@@ -24,9 +26,8 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
     });
   };
 
-  // Fecha menu ao clicar fora
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutsideMenu = (e: MouseEvent) => {
       if (
         isMenuOpen &&
         menuRef.current &&
@@ -38,11 +39,26 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
         document.body.classList.remove('menuOpenBody');
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutsideMenu);
+    return () => document.removeEventListener('mousedown', handleClickOutsideMenu);
   }, [isMenuOpen]);
 
-  // Desliga animação durante resize para evitar “piscar”
+  useEffect(() => {
+    const handleMouseDownOutsideSearch = (e: MouseEvent) => {
+      if (!isSearchOpen || !searchContainerRef.current) return;
+
+      if (window.innerWidth > 785) {
+        const clickedInside = searchContainerRef.current.contains(e.target as Node);
+        if (!clickedInside) {
+          setIsSearchOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleMouseDownOutsideSearch);
+    return () => document.removeEventListener('mousedown', handleMouseDownOutsideSearch);
+  }, [isSearchOpen, searchContainerRef]);
+
   useEffect(() => {
     let resizeTimer: number;
     const onResize = () => {
@@ -61,13 +77,19 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
   }, []);
 
   const toggleSearch = () => setIsSearchOpen(v => !v);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
+  const handleItemClick = (path: string) => {
+    setActiveItem(path);
+  };
+
+  const shouldShowSearch = location.pathname === '/anime-list' || location.pathname === '/genres';
+
   return (
     <>
-      {/* Overlay */}
       <div className={style.overlay} onClick={toggleMenu} />
 
       <nav className={style.container}>
@@ -84,29 +106,47 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
             ref={menuRef}
             className={`${style.slideMenu} ${isMenuOpen ? style.open : ''}`}
           >
-
-            {/* Itens do menu */}
-            <li className={style.icones}>
+            <li
+              className={`${style.icones} ${activeItem === '/recent' ? style.active : ''}`}
+              onClick={() => handleItemClick('/recent')}
+            >
               <Link className={style.link} to="/recent">Animes Recentes</Link>
             </li>
-            <li className={style.icones}>
+            <li
+              className={`${style.icones} ${activeItem === '/favoritos' ? style.active : ''}`}
+              onClick={() => handleItemClick('/favoritos')}
+            >
               <Link className={style.link} to="/favoritos">Favoritos</Link>
             </li>
-            <li className={style.icones}>
+            <li
+              className={`${style.icones} ${activeItem === '/Top10Animes' ? style.active : ''}`}
+              onClick={() => handleItemClick('/Top10Animes')}
+            >
               <Link className={style.link} to="/Top10Animes">Top 10</Link>
             </li>
-            <li className={style.icones}>
+            <li
+              className={`${style.icones} ${activeItem === '/anime-list' ? style.active : ''}`}
+              onClick={() => handleItemClick('/anime-list')}
+            >
               <Link className={style.link} to="/anime-list">Lista de Animes</Link>
             </li>
-            <li className={style.icones}>
+            <li
+              className={`${style.icones} ${activeItem === '/genres' ? style.active : ''}`}
+              onClick={() => handleItemClick('/genres')}
+            >
               <Link className={style.link} to="/genres">Gêneros</Link>
             </li>
-            <li className={style.navSearchMobile}>
+
+          </ul>
+        </div>
+        <li className={style.navSearchMobile }>
+            <div ref={searchContainerRef} className={style.mds}>
               {isSearchOpen && (
                 <input
                   type="text"
                   className={style.searchInput}
                   placeholder="Pesquisar..."
+                  value={searchTerm}
                   onChange={handleSearchChange}
                   autoFocus
                 />
@@ -117,20 +157,20 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
               >
                 <FiSearch size={20} />
               </button>
-            </li>
-          </ul>
-        </div>
+            </div>
+          </li>
         <button className={style.button} onClick={handleLogout}>
           Sair
         </button>
       </nav>
-       {/* Busca no topo (desktop) */}
-       <div className={style.searchContainer}>
+      {shouldShowSearch && (
+        <div className={style.searchContainer} ref={searchContainerRef}>
           {isSearchOpen && (
             <input
               type="text"
               className={style.searchInput}
               placeholder="Pesquisar..."
+              value={searchTerm}
               onChange={handleSearchChange}
               autoFocus
             />
@@ -142,6 +182,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleLogout }) => {
             <FiSearch size={20} />
           </button>
         </div>
+      )}
     </>
   );
 };

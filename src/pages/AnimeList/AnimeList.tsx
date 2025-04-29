@@ -141,12 +141,14 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
           anime.id === animeId ? { ...anime, currentRating: rating } : anime
         )
       );
+      console.log('Estado animes após avaliação:', animes.find(a => a.id === animeId));
+      
       setFilteredAnimes(prevFilteredAnimes =>
         prevFilteredAnimes.map(anime =>
           anime.id === animeId ? { ...anime, currentRating: rating } : anime
         )
       );
-
+      console.log('Estado filteredAnimes após avaliação:', filteredAnimes.find(a => a.id === animeId));
     } catch (error: unknown) {
       console.error('Error rating anime:', error)
       if (axios.isAxiosError(error)) {
@@ -162,6 +164,14 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
     console.log("Anime ID clicked:", animeId);
     navigate(`/animes/${animeId}`);
 };
+
+useEffect(() => {
+  console.log('Estado animes após atualização:', animes.find(a => a.id === '6745ed69e79fff27b7bb02e4')?.currentRating);
+}, [animes]);
+
+useEffect(() => {
+  console.log('Estado filteredAnimes após atualização:', filteredAnimes.find(a => a.id === '6745ed69e79fff27b7bb02e4')?.currentRating);
+}, [filteredAnimes]);
 
 if (loading)
   return (
@@ -188,7 +198,7 @@ const groupedAnimes = filteredAnimes.reduce(
 if (showGenres) {
   return (
     <div translate="no">
-      <h1 className={style.titulo} translate="no">Gêneros</h1>
+      <h1 className={style.titulo} translate="no"></h1>
       {Object.entries(groupedAnimes).map(([normalizedGenre, group]) => {
         const currentPage = pages[normalizedGenre] || 0;
         const startIndex = currentPage * itemsPerPage;
@@ -200,7 +210,7 @@ if (showGenres) {
           <div key={normalizedGenre} translate="no">
             <h2 className={style.sub_titulo} translate="no">{group.display}</h2>
             <div className={style.container}>
-              <ul className={style.cards}>
+            <ul className={`${style.cards} ${paginatedAnimes.length === 1 ? style.centered : ''}`}>
                 {paginatedAnimes.map(anime => (
                   <li
                     className={`${style.anime_card} ${style[normalizedGenre]}`}
@@ -294,8 +304,8 @@ const allAnimes = filteredAnimes.sort((a, b) => a.title.localeCompare(b.title));
 return (
   <div translate="no">
     <h1 className={style.titulo} translate="no">Lista de Animes</h1>
-    <div className={style.container}>
-      <ul className={style.cards}>
+    <div className={style.container}> 
+      <ul className={`${style.cards} ${allAnimes.length === 1 ? style.centered : ''}`}>
         {allAnimes.map(anime => (
           <li
             className={`${style.anime_card} ${style[anime.genre.split(',')[0].trim().toLowerCase()]}`}
