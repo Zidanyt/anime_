@@ -86,4 +86,9 @@
         align-self: center;
         margin: 10px 0px 15px 0px;
     }
+
+    .conteiner{
+        width: 100vw;
+        height: auto;
+    }
 }
