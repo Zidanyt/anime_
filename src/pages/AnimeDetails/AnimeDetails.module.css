@@ -149,10 +149,8 @@
 }
 
 @media (max-width: 785px) {
-    * {
-        padding-top: 0 !important;
-    }
     .container {
+        padding-top: 1px;
         max-width: 100%;
         grid-template-areas:
             "image"
