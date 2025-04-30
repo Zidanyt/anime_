@@ -1,5 +1,6 @@
 .container {
     max-width: 80vw;
+    height: 100%;
     margin: 70px auto;
     border-radius: 8px;
     background-color: #1c1c1c;
@@ -158,6 +159,7 @@
             "characters"
             "comments";
         grid-template-columns: 1fr;
+        margin: 0;
     }
 
     .image {
