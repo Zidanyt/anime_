@@ -24,17 +24,18 @@ const Favoritos: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { searchTerm } = useSearch();
 
-  const userId = sessionStorage.getItem('userId') || '';
+  const userId = sessionStorage.getItem('userId'); // Pegue o userId corretamente
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!userId) return;
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
 
       try {
         setLoading(true);
-        const [favResponse] = await Promise.all([
-          axiosInstance.get(`/favorites/${userId}`),
-        ]);
+        const favResponse = await axiosInstance.get(`/favorites/${userId}`);
 
         console.log('Favorites response:', favResponse.data);
         setFavoriteAnimes(favResponse.data);
@@ -59,12 +60,15 @@ const Favoritos: React.FC = () => {
   }, [searchTerm, favoriteAnimes]);
 
   const toggleFavorite = async (animeId: string) => {
+    if (!userId) {
+      setErrorMessage('Usuário não autenticado.');
+      return;
+    }
+
     try {
       if (favorites.includes(animeId)) {
         await axiosInstance.delete(`/favorites/${userId}/${animeId}`);
-
         setFavorites((prev) => prev.filter((id) => id !== animeId));
-
         setFavoriteAnimes((prevAnimes) =>
           prevAnimes.filter((anime) => anime.id !== animeId)
         );
@@ -73,13 +77,8 @@ const Favoritos: React.FC = () => {
           userId,
         });
         const anime = response.data;
-
         setFavorites((prev) => [...prev, animeId]);
-
-        setFavoriteAnimes((prevAnimes) => [
-          ...prevAnimes,
-          { ...anime, isFavorite: true },
-        ]);
+        setFavoriteAnimes((prevAnimes) => [...prevAnimes, { ...anime, isFavorite: true }]);
       }
     } catch (error) {
       console.error('Falha ao atualizar favorito:', error);
