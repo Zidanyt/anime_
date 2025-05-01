@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from '../../utils/axiosInstance';
+// import axios from '../../utils/axiosInstance';
 import { useNavigate, Link } from 'react-router-dom';
 import style from './login.module.css';
 import axiosInstance from '../../utils/axiosInstance';
@@ -11,7 +11,7 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -69,6 +69,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 export default Login;
 
-function setError(arg0: any) {
+function setError(_arg0: any) {
   throw new Error('Function not implemented.');
 }
