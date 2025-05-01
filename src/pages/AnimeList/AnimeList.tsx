@@ -39,12 +39,33 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
   const [pages, setPages] = useState<{ [genre: string]: number }>({});
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
   const { searchTerm } = useSearch();
-  const userId = sessionStorage.getItem('userId') || '';
   const navigate = useNavigate();
+  const userId = sessionStorage.getItem('userId') || ''; // Pegue o userId aqui para outras partes do componente
+  console.log('UserId ao montar AnimeList (inicial):', userId);
 
-  const fetchAnimes = async () => {
+  useEffect(() => {
+    const userId = sessionStorage.getItem('userId');
+    console.log('UserId dentro do useEffect:', userId);
+
+    if (!userId) {
+      console.warn('UserId não encontrado, abortando busca de animes e favoritos.');
+      setLoading(false);
+      return;
+    }
+
+    fetchAnimes(userId);
+    fetchFavorites(userId);
+  }, []);
+
+  const fetchAnimes = async (currentUserId: string) => {
+    if (!currentUserId) {
+      console.error('Tentativa de buscar animes sem UserId.');
+      setLoading(false);
+      return;
+    }
+    console.log('fetchAnimes chamado com userId:', currentUserId);
     try {
-      const response = await axiosInstance.get('/animes', { params: { userId } });
+      const response = await axiosInstance.get('/animes', { params: { userId: currentUserId } });
       console.log('Animes carregados:', response.data);
       setAnimes(response.data);
       setFilteredAnimes(response.data);
@@ -64,9 +85,9 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
     }
   };
 
-  const fetchFavorites = async () => {
+  const fetchFavorites = async (currentUserId: string) => {
     try {
-      const response = await axiosInstance.get(`/favorites/${userId}`);
+      const response = await axiosInstance.get(`/favorites/${currentUserId}`);
       setFavorites(response.data.map((anime: Anime) => anime.id));
     } catch (error) {
       console.error('Error fetching favorites:', error);
@@ -74,8 +95,8 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
   };
 
   useEffect(() => {
-    fetchAnimes();
-    fetchFavorites();
+    fetchAnimes(userId);
+    fetchFavorites(userId);
   }, []);
 
   useEffect(() => {

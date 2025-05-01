@@ -12,10 +12,15 @@ import Navbar from './components/NavBar/Navbar';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [loadingAuth, setLoadingAuth] = useState<boolean>(true); // Novo estado de carregamento
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
+    const storedUserId = sessionStorage.getItem('userId');
+    console.log('Token ao montar App:', token);
+    console.log('UserId ao montar App:', storedUserId);
     setIsLoggedIn(!!token);
+    setLoadingAuth(false); // Finaliza o carregamento da autenticação inicial
   }, []);
 
   const handleLogout = () => {
@@ -24,6 +29,14 @@ const App: React.FC = () => {
     setIsLoggedIn(false);
   };
 
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  if (loadingAuth) {
+    return <div>Carregando autenticação...</div>; // Ou um spinner mais amigável
+  }
+
   return (
     <Router>
       <SearchProvider>
@@ -31,7 +44,7 @@ const App: React.FC = () => {
         <div className='container'>
           <Routes>
             <Route path="/" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Register />} />
-            <Route path="/login" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Login onLogin={() => setIsLoggedIn(true)} />} />
+            <Route path="/login" element={isLoggedIn ? <Navigate to="/anime-list" /> : <Login onLogin={handleLoginSuccess} />} />
             <Route path="/animes/:id" element={isLoggedIn ? <AnimeDetails /> : <Navigate to="/login" />} />
             <Route path="/recent" element={isLoggedIn ? <RecentAnimeList /> : <Navigate to="/login" />} />
             <Route path="/favoritos" element={isLoggedIn ? <Favoritos /> : <Navigate to="/login" />} />

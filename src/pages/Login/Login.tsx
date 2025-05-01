@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import axios from '../../utils/axiosInstance'
-import { useNavigate, Link  } from 'react-router-dom'
-
+import React, { useState } from 'react';
+import axios from '../../utils/axiosInstance';
+import { useNavigate, Link } from 'react-router-dom';
 import style from './login.module.css';
+import axiosInstance from '../../utils/axiosInstance';
 
 interface LoginProps {
-  onLogin: () => void
+  onLogin: (userId: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
@@ -15,22 +15,23 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const response = await axios.post('/login', { email, password });
-      sessionStorage.setItem('token', response.data.token);
-      sessionStorage.setItem('userId', response.data.userId);
-      onLogin();
-      navigate('/anime-list');
-    } catch (error) {
-      console.error('Erro no login:', error);
-      setErrorMessage('Email ou senha incorretos.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+  try {
+    const response = await axiosInstance.post('/login', { email, password });
+    const data = response.data;
+    console.log('Resposta do backend no login:', data);
+    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('userId', data.userId); // Salve o userId
+    onLogin(data.userId); // Se você tiver um callback para atualizar o estado de login no App
+    navigate('/anime-list');
+  } catch (error: any) {
+    setError(error.response?.data?.error || 'Erro ao fazer login.');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className={style.conteiner}>
@@ -60,7 +61,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           {isLoading ? <span className={style.spinner}></span> : 'Entrar'}
         </button>
         <p>Não tem uma conta? <Link className={style.formulario_link} to="/">Cadastre-se</Link></p>
-        
         {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       </form>
     </div>
@@ -69,3 +69,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
 export default Login;
 
+function setError(arg0: any) {
+  throw new Error('Function not implemented.');
+}
