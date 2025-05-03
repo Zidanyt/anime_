@@ -19,7 +19,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setIsLoading(true);
   try {
-    const response = await axiosInstance.post('/login', { email, password });
+    const response = await axiosInstance.post('/api/users/login', { email, password });
     const data = response.data;
     console.log('Resposta do backend no login:', data);
     sessionStorage.setItem('token', data.token);

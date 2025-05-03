@@ -19,7 +19,7 @@ const Register: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await axiosInstance.post('/register', { email, password });
+      const response = await axiosInstance.post('/api/users/register', { email, password });
       console.log('Registro bem-sucedido:', response.data);
       setSuccessMessage('Cadastro realizado com sucesso!');
       setTimeout(() => {

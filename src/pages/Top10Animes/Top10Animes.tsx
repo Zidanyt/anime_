@@ -34,8 +34,8 @@ const Top10Animes: React.FC = () => {
       try {
         setLoading(true);
         const [topResponse, favResponse] = await Promise.all([
-          axiosInstance.get('/top10', { params: { userId } }),
-          axiosInstance.get(`/favorites/${userId}`),
+          axiosInstance.get('/api/animes/top10', { params: { userId } }),
+          axiosInstance.get(`/api/animes/favorites/${userId}`),
         ]);
 
         const sortedAnimes = topResponse.data.sort(
@@ -68,12 +68,12 @@ const Top10Animes: React.FC = () => {
   const toggleFavorite = async (animeId: string) => {
     try {
       if (favorites.includes(animeId)) {
-        await axiosInstance.delete(`/favorites/${animeId}`, {
+        await axiosInstance.delete(`/api/animes/favorites/${animeId}`, {
           params: { userId },
         });
         setFavorites((prev) => prev.filter((id) => id !== animeId));
       } else {
-        await axiosInstance.post(`/favorites/${animeId}`, { userId });
+        await axiosInstance.post(`/api/animes/favorites/${animeId}`, { userId });
         setFavorites((prev) => [...prev, animeId]);
       }
     } catch (error) {

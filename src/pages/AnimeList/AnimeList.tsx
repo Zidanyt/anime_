@@ -65,7 +65,7 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
     }
     console.log('fetchAnimes chamado com userId:', currentUserId);
     try {
-      const response = await axiosInstance.get('/animes', { params: { userId: currentUserId } });
+      const response = await axiosInstance.get('/api/animes', { params: { userId: currentUserId } });
       console.log('Animes carregados:', response.data);
       setAnimes(response.data);
       setFilteredAnimes(response.data);
@@ -87,7 +87,7 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
 
   const fetchFavorites = async (currentUserId: string) => {
     try {
-      const response = await axiosInstance.get(`/favorites/${currentUserId}`);
+      const response = await axiosInstance.get(`/api/animes/favorites/${currentUserId}`);
       setFavorites(response.data.map((anime: Anime) => anime.id));
     } catch (error) {
       console.error('Error fetching favorites:', error);
@@ -136,10 +136,10 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
   const toggleFavorite = async (animeId: string) => {
     try {
       if (favorites.includes(animeId)) {
-        await axiosInstance.delete(`/favorites/${userId}/${animeId}`)
+        await axiosInstance.delete(`/api/animes/favorites/${userId}/${animeId}`)
         setFavorites(favorites.filter(id => id !== animeId))
       } else {
-        await axiosInstance.post(`/favorites/${animeId}`, { userId })
+        await axiosInstance.post(`/api/animes/favorites/${animeId}`, { userId })
         setFavorites([...favorites, animeId])
       }
     } catch (error) {
@@ -154,7 +154,7 @@ const AnimeList: React.FC<AnimeListProps> = ({ showGenres }) => {
     }
 
     try {
-      const response = await axiosInstance.post(`/animes/${animeId}/rate`, { userId, stars: rating })
+      const response = await axiosInstance.post(`/api/animes/${animeId}/rate`, { userId, stars: rating })
       console.log('Anime rated successfully:', response.data)
 
       setAnimes(prevAnimes =>

@@ -35,7 +35,7 @@ const Favoritos: React.FC = () => {
 
       try {
         setLoading(true);
-        const favResponse = await axiosInstance.get(`/favorites/${userId}`);
+        const favResponse = await axiosInstance.get(`/api/animes/favorites/${userId}`);
 
         console.log('Favorites response:', favResponse.data);
         setFavoriteAnimes(favResponse.data);
@@ -67,13 +67,13 @@ const Favoritos: React.FC = () => {
 
     try {
       if (favorites.includes(animeId)) {
-        await axiosInstance.delete(`/favorites/${userId}/${animeId}`);
+        await axiosInstance.delete(`/api/animes/favorites/${userId}/${animeId}`);
         setFavorites((prev) => prev.filter((id) => id !== animeId));
         setFavoriteAnimes((prevAnimes) =>
           prevAnimes.filter((anime) => anime.id !== animeId)
         );
       } else {
-        const response = await axiosInstance.post(`/favorites/${animeId}`, {
+        const response = await axiosInstance.post(`/api/animes/favorites/${animeId}`, {
           userId,
         });
         const anime = response.data;

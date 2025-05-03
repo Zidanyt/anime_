@@ -29,7 +29,7 @@ const RecentAnimeList: React.FC = () => {
     const fetchRecentAnimes = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get('/recent', {
+        const response = await axiosInstance.get('/api/animes/recent', {
           params: { userId },
         });
         setRecentAnimes(response.data);

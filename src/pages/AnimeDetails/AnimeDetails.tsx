@@ -47,7 +47,7 @@ const AnimeDetails: React.FC = () => {
       }
 
       try {
-        const response = await axiosInstance.get<Anime>(`/animes/${id}`);
+        const response = await axiosInstance.get<Anime>(`/api/animes/${id}`);
         setAnime(response.data);
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -70,7 +70,7 @@ const AnimeDetails: React.FC = () => {
 
     const fetchComments = async () => {
       try {
-        const response = await axiosInstance.get(`/animes/${id}/comments`);
+        const response = await axiosInstance.get(`/api/animes/${id}/comments`);
         setComments(response.data);
       } catch (error) {
         console.error('Erro ao buscar comentários:', error);
@@ -87,7 +87,7 @@ const AnimeDetails: React.FC = () => {
     if (!newComment || !userId) return;
 
     try {
-      const response = await axiosInstance.post(`/animes/${id}/comments`, {
+      const response = await axiosInstance.post(`/api/animes/${id}/comments`, {
         userId: userId,
         text: newComment,
       });
@@ -104,7 +104,7 @@ const AnimeDetails: React.FC = () => {
   const handleDeleteComment = async (commentId: string) => {
     console.log('Apagando comentário com ID:', commentId);
     try {
-      const response = await axiosInstance.delete(`/comments/${commentId}`, {
+      const response = await axiosInstance.delete(`/api/animes/comments/${commentId}`, {
         data: { userId: userId },
       });
       if (response.status === 200) {
